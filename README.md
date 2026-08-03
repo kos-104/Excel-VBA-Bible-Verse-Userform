@@ -6,7 +6,7 @@ Key features include the ability to resize the form and all controls, as well as
 
 The userform is intuitive with navigational tooltips and spin buttons, improving user interaction. Listboxes in the userform allow mouse scrolling for added convenience. Users can choose amongst several of the most popular Bible versions and can download multiple verses from the same chapter simultaneously, enhancing efficiency. 
 
-Command buttons also change colors when the mouse hovers over them, helping users pinpoint the button targeted. Event handling is thorough, with custom commands for adding, clearing, and confirming line items which are supported by error handling.
+Command buttons also change colors when the mouse hovers over them, helping users to pinpoint the button targeted. Event handling is thorough, with custom commands for adding, clearing, and confirming line items which are supported by error handling.
 
 Special acknowledgment goes to David Hager for his extensive groundwork on the dynamic named ranges/formulas and pivot tables that underpin the form's framework (https://dhexcel1.wordpress.com/2017/07/03/lookup-a-bible-verse-using-excel-wo-vba-by-david-hager/). 
 
