@@ -11,7 +11,7 @@
 
 The **Excel VBA Bible Userform** is an internet-connected tool that uses web-scraping to display Bible verses directly within Microsoft Excel.
 
-It employs the **Model-View-ViewModel (MVVM)** architecture to enhance maintainability and scalability, patterned after the *RubberduckSwagShop MVVM-Lite* project. This structure separates the user interface from business logic, enabling flexible data binding and command execution.
+It employs the **Model-View-ViewModel (MVVM)** architecture to enhance maintainability and scalability, patterned after the *RubberduckSwagShop MVVM-Lite* project. This structure separates the user interface from business logic, enabling flexible data binding and command execution. **Interfaces** are used throughout to exhibit **polymorphism**, allowing different class modules to share a common contract while implementing their own specific behavior — a key OOP technique that reinforces the flexibility of the MVVM design.
 
 **Key features include:**
 - A fully resizable form, controls, and downloaded verse text — ensuring a responsive experience across screen sizes
