@@ -1,16 +1,34 @@
-The Excel VBA Bible Userform is an internet tool that uses web-scraping to display Bible verses in Microsoft Excel. 
+# Excel VBA Bible Userform
 
-It employs the Model-View-ViewModel (MVVM) architecture to enhance maintainability and scalability. This structure patterns the "RubberduckSwagShop MVVM-Lite" project. The design separates the user interface from business logic, allowing flexible data binding and command execution.
+**Bringing scripture to Excel — a dynamic, MVVM-driven VBA userform for looking up Bible verses on demand.**
 
-Key features include the ability to resize the form, all of its controls, and the downloaded text of verse(s) - facilitating a responsive user experience across different screen sizes. 
+![VBA](https://img.shields.io/badge/Language-VBA-blue.svg)
+![Excel](https://img.shields.io/badge/Platform-Excel-217346.svg)
+![Architecture](https://img.shields.io/badge/Architecture-MVVM-orange.svg)
+![Web Scraping](https://img.shields.io/badge/Feature-Web%20Scraping-brightgreen.svg)
 
-The userform is intuitive with navigational tooltips and spin buttons, improving user interaction. Listboxes in the form allow mouse scrolling for added convenience. Users can choose amongst several of the most popular Bible versions and can download multiple verses from the same chapter simultaneously, enhancing efficiency. 
+## Description
 
-Command buttons also change colors when the mouse hovers over them, helping users to pinpoint the button targeted. Event handling is thorough, with custom commands for adding, clearing, and confirming line items which are supported by error handling.
+The **Excel VBA Bible Userform** is an internet-connected tool that uses web-scraping to display Bible verses directly within Microsoft Excel.
 
-Special acknowledgment goes to David Hager for his extensive groundwork on the dynamic named ranges/formulas and pivot tables that underpin the form's framework (https://dhexcel1.wordpress.com/2017/07/03/lookup-a-bible-verse-using-excel-wo-vba-by-david-hager/). 
+It employs the **Model-View-ViewModel (MVVM)** architecture to enhance maintainability and scalability, patterned after the *RubberduckSwagShop MVVM-Lite* project. This structure separates the user interface from business logic, enabling flexible data binding and command execution.
 
-An additional thanks to Mathieu Guindon and the Rubberduck team for creating the “SwagShop” MVVM-Lite program utilized to build this project (https://rubberduckvba.blog/2023/04/11/lightweight-mvvm-in-vba/).
+**Key features include:**
+- A fully resizable form, controls, and downloaded verse text — ensuring a responsive experience across screen sizes
+- Intuitive navigation via tooltips and spin buttons
+- Mouse-scrollable listboxes for added convenience
+- Support for several popular Bible versions
+- Simultaneous download of multiple verses from the same chapter
+- Hover-responsive command buttons for clearer target identification
+- Thorough event handling, with custom commands for adding, clearing, and confirming line items — all backed by robust error handling
 
+## Acknowledgments
 
+Special thanks to:
+
+- **David Hager**, for his extensive groundwork on the dynamic named ranges/formulas and pivot tables underpinning this form's framework.
+  📖 [Lookup a Bible Verse Using Excel w/o VBA](https://dhexcel1.wordpress.com/2017/07/03/lookup-a-bible-verse-using-excel-wo-vba-by-david-hager/)
+
+- **Mathieu Guindon and the Rubberduck team**, for creating the *SwagShop* MVVM-Lite program used as the architectural foundation for this project.
+  🦆 [Lightweight MVVM in VBA](https://rubberduckvba.blog/2023/04/11/lightweight-mvvm-in-vba/)
 
