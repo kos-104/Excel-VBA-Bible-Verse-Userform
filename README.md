@@ -49,7 +49,7 @@ This project implements a **hybrid** MVVM approach rather than a textbook-pure o
 
 ### The Layers
 
-There's no separately named Model class in this project — verse data comes from live web scraping rather than a stored data source, and the scraping module feeds directly into the ViewModel. So this is more accurately a View and ViewModel structure, with a thin data-retrieval layer standing in for the Model's role.
+There's no separately named **Model** class in this project — verse data comes from live web scraping rather than a stored data source, and the scraping module feeds directly into the ViewModel. So this is more accurately a View and ViewModel structure, with a thin data-retrieval layer standing in for the Model's role.
 
 **The ViewModel** (`BibleViewModel`) holds the application's bindable state — selected version, book, chapter, and verse lists — exposed as properties with change notification. For most of the form's list-driven behavior, this keeps the ViewModel properly decoupled from the userform, its controls, and their positions. This is the ViewModel acting as it should: mediating between data and display, with the View knowing about it, but not the reverse.
 
