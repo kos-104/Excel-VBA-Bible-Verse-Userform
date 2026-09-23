@@ -40,13 +40,17 @@ It employs the **Model-View-ViewModel (MVVM)** architecture to enhance maintaina
 
 This project's MVVM structure exists to solve a common problem in VBA userforms: business logic, UI controls, and event handling tend to blur together until every procedure knows too much about everything else. MVVM keeps these concerns separate, so the form's controls don't need to know how a verse gets scraped from the web, and the scraping logic doesn't need to know which textbox displays the result.
 
+It's worth noting upfront that this project implements a **hybrid** MVVM approach rather than a textbook-pure one. Most of the form's behavior — list population, selection syncing, change notification — follows strict MVVM separation. The verse-capture and clearing commands take a more direct, pragmatic route instead, described below. This was a deliberate tradeoff, not an oversight, made in favor of simplicity for a single-form, single-consumer tool.
+
 ### The Three Layers
 
-**The ViewModel** (`BibleViewModel`) holds the application's state and logic — the selected Bible version, book, chapter, verse selections, and the operations that act on them. It knows nothing about the userform, its controls, or their positions. This isolation is what makes the logic testable and reusable independent of the UI.
+**The ViewModel** (`BibleViewModel`) holds the application's bindable state — the selected version, book, chapter, and verse lists — exposed as properties with change notification. For most of the form's list-driven behavior, this keeps the ViewModel properly decoupled: it knows nothing about the userform, its controls, or their positions.
 
-**The View** is the userform itself — a collection of textboxes, listboxes, spin buttons, and command buttons. The controls are intentionally "dumb": they display values and raise events, but they don't contain business logic or know how to fetch a verse.
+That isolation isn't absolute across the whole class, though. `BibleViewModel`'s command operations — capturing a verse, clearing the form, adjusting the spin position — take a more direct route. Rather than working purely through bound properties, these methods receive the userform as a parameter and forward it into standalone procedures, which read control values and write results straight back into the form. This keeps the code straightforward at the cost of the ViewModel being fully agnostic of the View for that portion of its behavior.
 
-**The glue in between** is where data binding and commands do their work, allowing the ViewModel and View to communicate without ever referencing each other directly.
+**The View** is the userform itself — a collection of textboxes, listboxes, spin buttons, and command buttons. Most controls are intentionally "dumb": they display values and raise events without containing business logic. The exception is the verse-capture and clearing flow, where the command layer hands the form directly to the logic that manipulates it, bypassing the binding layer for that operation.
+
+**The glue in between** is where data binding and commands do their work for everything else, allowing the ViewModel and View to communicate without referencing each other directly — the list population and selection syncing for versions, books, and chapters follow this path faithfully, even where the command operations don't.
 
 ### Data Binding: Keeping the ViewModel and Form in Sync
 
@@ -64,17 +68,17 @@ The reverse path handles user input:
 2. The control's `Change` event fires
 3. The binding reads the new value and pushes it back to the ViewModel property using `CallByName`
 
-This two-way flow means the ViewModel and the View stay synchronized without either one holding a direct reference to the other's internals.
+This two-way flow means the ViewModel and the View stay synchronized without either one holding a direct reference to the other's internals — for the properties and controls that follow this path.
 
 ### Commands: Decoupling Button Clicks from Logic
 
-Rather than wiring a button's `Click` event directly to a ViewModel method, each user action is wrapped in a command class implementing a shared `ICommand` interface. Using `AddLineItemCommand` as an example: when the button is clicked, `CommandBinding` calls the command's `CanExecute` method first, confirming the ViewModel is in a valid state to receive the action. Only then does it call `Execute`, which forwards the request to the corresponding ViewModel method.
+Rather than wiring a button's `Click` event directly to a ViewModel method, each user action is wrapped in a command class implementing a shared `ICommand` interface. Using the verse-capture command as an example: when the button is clicked, `CommandBinding` calls the command's `CanExecute` method first, confirming the ViewModel is in a valid state to receive the action. Only then does it call `Execute`, which forwards the request to the corresponding `BibleViewModel` method.
 
-This indirection means the button doesn't need to know anything about the ViewModel's methods, and the ViewModel doesn't need to know anything about which button was clicked. Similar commands (`ClearLineItemsCommand`, `ClearOptionsCommand`) follow the same pattern for their respective actions.
+From there, the request takes the direct route described above: `BibleViewModel` passes the userform reference into a standalone procedure, which reads the current listbox selections, performs the lookup, and writes the result straight back into the form. Similar commands (clearing line items, clearing options) follow the same pattern for their respective actions.
 
 ### Web Scraping: Retrieving Verse Text
 
-Once a book, chapter, and verse selection are confirmed, a dedicated module handles the HTTP request using `Microsoft XML v6.0`, retrieving the raw HTML from the source page. A second pair of modules then parses that HTML using the `Microsoft HTML Object Library`, locating the specific elements containing the verse text and passing the cleaned result back to the ViewModel — which, in turn, pushes it to the View through the data binding layer already described.
+Once a book, chapter, and verse selection are confirmed, a dedicated module handles the HTTP request using `Microsoft XML v6.0`, retrieving the raw HTML from the source page. A second pair of modules then parses that HTML using the `Microsoft HTML Object Library`, locating the specific elements containing the verse text and passing the cleaned result back for display on the form.
 
 ### Supporting Utilities
 
