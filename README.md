@@ -11,7 +11,7 @@
 
 The **Excel VBA Bible Userform** is an internet-connected tool that uses web-scraping to display Bible verses directly within Microsoft Excel.
 
-It employs the **Model-View-ViewModel (MVVM)** architecture to enhance maintainability and scalability, patterned after the *RubberduckSwagShop MVVM-Lite* project. This structure separates the user interface from business logic, enabling flexible data binding and command execution. **Interfaces** are used throughout to exhibit **polymorphism**, allowing different class modules to share a common contract while implementing their own specific behavior — a key OOP technique that reinforces the flexibility of the MVVM design.
+It employs the **Model-View-ViewModel (MVVM)** architecture to enhance maintainability and scalability, patterned after the *RubberduckSwagShop MVVM-Lite* project. This structure separates the user interface from business logic, enabling flexible data binding and command execution. Interfaces are used throughout to exhibit **polymorphism** — different class modules sharing a common contract, each implementing its own specific behavior.
 
 **Key features include:**
 - A fully resizable form, controls, and downloaded verse text — ensuring a responsive experience across screen sizes
@@ -38,36 +38,43 @@ It employs the **Model-View-ViewModel (MVVM)** architecture to enhance maintaina
 
 ## Under the Hood
 
-This project's MVVM structure exists to solve a common problem in VBA userforms: business logic, UI controls, and event handling tend to blur together until every procedure knows too much about everything else. MVVM keeps these concerns separate, so the form's controls don't need to know how a verse gets scraped from the web, and the scraping logic doesn't need to know which textbox displays the result.
+MVVM keeps business logic, UI controls, and event handling from blurring together — a common problem in VBA userforms once every procedure starts knowing too much about everything else. The form's controls don't need to know how a verse gets scraped from the web, and the scraping logic doesn't need to know which textbox displays the result.
 
-It's worth noting upfront that this project implements a **hybrid** MVVM approach rather than a textbook-pure one:
+This project implements a **hybrid** MVVM approach rather than a textbook-pure one, as a deliberate tradeoff in favor of simplicity for a single-form, single-consumer tool:
 
 - List population, selection syncing, and change notification follow strict MVVM separation
 - Verse-capture and clearing commands take a more direct, pragmatic route instead, described below
 
-This was a deliberate tradeoff, not an oversight, made in favor of simplicity for a single-form, single-consumer tool.
-
 ### The Three Layers
 
-**The ViewModel** (`BibleViewModel`) holds the application's bindable state — the selected version, book, chapter, and verse lists — exposed as properties with change notification. For most of the form's list-driven behavior, this keeps the ViewModel properly decoupled: it knows nothing about the userform, its controls, or their positions.
+**The ViewModel** (`BibleViewModel`) holds the application's bindable state — selected version, book, chapter, and verse lists — exposed as properties with change notification. For most of the form's list-driven behavior, this keeps the ViewModel properly decoupled from the userform, its controls, and their positions.
 
-That isolation isn't absolute across the whole class, though. `BibleViewModel`'s command operations — capturing a verse, clearing the form, adjusting the spin position — take a more direct route. Rather than working purely through bound properties, these methods receive the userform as a parameter and forward it into standalone procedures, which read control values and write results straight back into the form. This keeps the code straightforward at the cost of the ViewModel being fully agnostic of the View for that portion of its behavior.
+That isolation isn't absolute across the whole class, though. Command operations — capturing a verse, clearing the form, adjusting the spin position — take a more direct route:
 
-**The View** is the userform itself — a collection of textboxes, listboxes, spin buttons, and command buttons. Most controls are intentionally "dumb": they display values and raise events without containing business logic. The exception is the verse-capture and clearing flow, where the command layer hands the form directly to the logic that manipulates it, bypassing the binding layer for that operation.
+- These methods receive the userform as a parameter
+- They forward it into standalone procedures
+- Those procedures read control values and write results straight back into the form
 
-**The glue in between** is where data binding and commands do their work for everything else, allowing the ViewModel and View to communicate without referencing each other directly — the list population and selection syncing for versions, books, and chapters follow this path faithfully, even where the command operations don't.
+This keeps the code straightforward, at the cost of the ViewModel being fully agnostic of the View for that portion of its behavior.
+
+**The View** is the userform itself — textboxes, listboxes, spin buttons, and command buttons. Most controls are intentionally "dumb": they display values and raise events without containing business logic. The exception is the verse-capture and clearing flow, where the command layer hands the form directly to the logic that manipulates it, bypassing the binding layer for that operation.
+
+**The glue in between** is where data binding and commands do their work for everything else, letting the ViewModel and View communicate without referencing each other directly. List population and selection syncing for versions, books, and chapters follow this path faithfully, even where the command operations don't.
 
 ### Interfaces and Polymorphism
 
-VBA doesn't support inheritance the way languages like C# or Java do, but it does support interface implementation through `Implements` — and this project leans on that heavily. Each binding class (`TextBoxValueBinding`, `ListBoxValueBinding`, `SpinBttnValueBinding`, `CommandBttnValueBinding`) implements the same `IHandlePropertyChanged` interface. Each command class implements the same `ICommand` interface, with its own `CanExecute` and `Execute` methods.
+VBA doesn't support inheritance the way languages like C# or Java do, but it does support interface implementation through `Implements` — and this project leans on that heavily:
 
-This matters because it means the rest of the system — `PropertyChangeNotification`, `CommandBinding`, `PropertyBindings` — never needs to know which concrete class it's holding. A collection of bindings can be looped through and notified identically, regardless of whether each one wraps a TextBox, a ListBox, or a SpinButton, because they all satisfy the same contract. Swap in a new control type tomorrow, and as long as its binding class implements `IHandlePropertyChanged`, nothing else in the system needs to change.
+- Each binding class (`TextBoxValueBinding`, `ListBoxValueBinding`, `SpinBttnValueBinding`, `CommandBttnValueBinding`) implements the same `IHandlePropertyChanged` interface
+- Each command class implements the same `ICommand` interface, with its own `CanExecute` and `Execute` methods
 
-This is **polymorphism**: different class modules, sharing a common interface, each implementing that interface's methods according to their own control's needs. It's what lets a single `PropertyChangeNotification` object hold a generic collection of handlers and call `OnPropertyChanged` on all of them uniformly, without a chain of `If TypeOf... Then` checks to sort out what kind of control it's dealing with.
+This matters because the rest of the system — `PropertyChangeNotification`, `CommandBinding`, `PropertyBindings` — never needs to know which concrete class it's holding. A collection of bindings can be looped through and notified identically, regardless of whether each one wraps a TextBox, a ListBox, or a SpinButton, because they all satisfy the same contract. Swap in a new control type tomorrow, and as long as its binding class implements `IHandlePropertyChanged`, nothing else in the system needs to change.
+
+This is **polymorphism**: different class modules, sharing a common interface, each implementing that interface's methods according to their own control's needs — letting a single `PropertyChangeNotification` object call `OnPropertyChanged` on a whole collection of handlers uniformly, with no `If TypeOf... Then` chain required to sort out what kind of control it's dealing with.
 
 ### Data Binding: Keeping the ViewModel and Form in Sync
 
-Each bindable control (textboxes, listboxes, spin buttons, and command buttons) has a corresponding binding class — `TextBoxValueBinding`, `ListBoxValueBinding`, `SpinBttnValueBinding`, and `CommandBttnValueBinding` — created through a central `PropertyBindings` factory. Each binding class implements `IHandlePropertyChanged`, allowing it to listen for changes on the ViewModel.
+Each bindable control has a corresponding binding class — `TextBoxValueBinding`, `ListBoxValueBinding`, `SpinBttnValueBinding`, `CommandBttnValueBinding` — created through a central `PropertyBindings` factory. Each implements `IHandlePropertyChanged`, allowing it to listen for changes on the ViewModel.
 
 Using `TextBoxValueBinding` as an example, the round-trip works like this:
 
@@ -81,23 +88,25 @@ The reverse path handles user input:
 2. The control's `Change` event fires
 3. The binding reads the new value and pushes it back to the ViewModel property using `CallByName`
 
-This two-way flow means the ViewModel and the View stay synchronized without either one holding a direct reference to the other's internals — for the properties and controls that follow this path.
+This two-way flow keeps the ViewModel and View synchronized without either holding a direct reference to the other's internals — for the properties and controls that follow this path.
 
 ### Commands: Decoupling Button Clicks from Logic
 
-Rather than wiring a button's `Click` event directly to a ViewModel method, each user action is wrapped in a command class implementing a shared `ICommand` interface. Using the verse-capture command as an example: when the button is clicked, `CommandBinding` calls the command's `CanExecute` method first, confirming the ViewModel is in a valid state to receive the action. Only then does it call `Execute`, which forwards the request to the corresponding `BibleViewModel` method.
+Rather than wiring a button's `Click` event directly to a ViewModel method, each user action is wrapped in a command class implementing a shared `ICommand` interface. Using the verse-capture command as an example:
 
-From there, the request takes the direct route described above:
-
+- The button click triggers `CommandBinding`, which calls the command's `CanExecute` method first, confirming the ViewModel is in a valid state to receive the action
+- Only then does it call `Execute`, forwarding the request to the corresponding `BibleViewModel` method
 - `BibleViewModel` passes the userform reference into a standalone procedure
-- That procedure reads the current listbox selections and performs the lookup
-- The result is written straight back into the form
+- That procedure reads the current listbox selections, performs the lookup, and writes the result straight back into the form
 
 Similar commands (clearing line items, clearing options) follow the same pattern for their respective actions.
 
 ### Web Scraping: Retrieving Verse Text
 
-Once a book, chapter, and verse selection are confirmed, a dedicated module handles the HTTP request using `Microsoft XML v6.0`, retrieving the raw HTML from the source page. A second pair of modules then parses that HTML using the `Microsoft HTML Object Library`, locating the specific elements containing the verse text and passing the cleaned result back for display on the form.
+Once a book, chapter, and verse selection are confirmed, retrieving and displaying the verse text happens in two steps:
+
+1. A dedicated module handles the HTTP request using `Microsoft XML v6.0`, retrieving the raw HTML from the source page
+2. A second pair of modules parses that HTML using the `Microsoft HTML Object Library`, locating the specific elements containing the verse text and passing the cleaned result back for display on the form
 
 ### Supporting Utilities
 
