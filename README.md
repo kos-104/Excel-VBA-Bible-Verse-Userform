@@ -11,7 +11,7 @@
 
 The **Excel VBA Bible Userform** is an internet-connected tool that uses web-scraping to display Bible verses directly within Microsoft Excel.
 
-It employs the **Model-View-ViewModel (MVVM)** architecture to enhance maintainability and scalability, patterned after the *RubberduckSwagShop MVVM-Lite* project. This structure separates the user interface from business logic, enabling flexible data binding and command execution. Interfaces are used throughout to exhibit **polymorphism** — different class modules sharing a common contract, each implementing its own specific behavior.
+It employs an architecture patterned after **Model-View-ViewModel (MVVM)** — specifically a View/ViewModel structure with data binding and command execution, adapted from the *RubberduckSwagShop MVVM-Lite* project. This structure separates the user interface from business logic, enabling flexible data binding and command execution. Interfaces are used throughout to exhibit **polymorphism** — different class modules sharing a common contract, each implementing its own specific behavior.
 
 **Key features include:**
 - A fully resizable form, controls, and downloaded verse text — ensuring a responsive experience across screen sizes
@@ -45,8 +45,6 @@ This project implements a **hybrid** MVVM approach rather than a textbook-pure o
 - List population, selection syncing, and change notification follow strict MVVM separation
 - Verse-capture and clearing commands take a more direct, pragmatic route instead, described below
 
-### The Three Layers
-
 ### The Layers
 
 There's no separately named **Model** class in this project — verse data comes from live web scraping rather than a stored data source, and the scraping module feeds directly into the ViewModel. So this is more accurately a View and ViewModel structure, with a thin data-retrieval layer standing in for the Model's role.
@@ -63,8 +61,7 @@ This keeps the code straightforward, at the cost of the ViewModel knowing about 
 
 **The View** is the userform itself — textboxes, listboxes, spin buttons, and command buttons. Most controls are intentionally "dumb": they display values and raise events without containing business logic. The exception is the verse-capture and clearing flow, where the command layer hands the form directly to the logic that manipulates it, bypassing the binding layer for that operation.
 
-**Data binding and commands** are the mechanism the ViewModel uses to mediate with the View indirectly, rather than a layer of their own. List population and selection syncing for versions, books, and chapters follow this path faithfully, even where the command operations don't.
-
+**Tying them together**, data binding and commands are the mechanism the ViewModel uses to mediate with the View indirectly, rather than a layer of their own. List population and selection syncing for versions, books, and chapters follow this path faithfully, even where the command operations don't.
 
 ### Interfaces and Polymorphism
 
