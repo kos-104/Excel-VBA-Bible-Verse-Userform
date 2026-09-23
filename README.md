@@ -57,6 +57,14 @@ That isolation isn't absolute across the whole class, though. `BibleViewModel`'s
 
 **The glue in between** is where data binding and commands do their work for everything else, allowing the ViewModel and View to communicate without referencing each other directly — the list population and selection syncing for versions, books, and chapters follow this path faithfully, even where the command operations don't.
 
+### Interfaces and Polymorphism
+
+VBA doesn't support inheritance the way languages like C# or Java do, but it does support interface implementation through `Implements` — and this project leans on that heavily. Each binding class (`TextBoxValueBinding`, `ListBoxValueBinding`, `SpinBttnValueBinding`, `CommandBttnValueBinding`) implements the same `IHandlePropertyChanged` interface. Each command class implements the same `ICommand` interface, with its own `CanExecute` and `Execute` methods.
+
+This matters because it means the rest of the system — `PropertyChangeNotification`, `CommandBinding`, `PropertyBindings` — never needs to know which concrete class it's holding. A collection of bindings can be looped through and notified identically, regardless of whether each one wraps a TextBox, a ListBox, or a SpinButton, because they all satisfy the same contract. Swap in a new control type tomorrow, and as long as its binding class implements `IHandlePropertyChanged`, nothing else in the system needs to change.
+
+This is **polymorphism**: different class modules, sharing a common interface, each implementing that interface's methods according to their own control's needs. It's what lets a single `PropertyChangeNotification` object hold a generic collection of handlers and call `OnPropertyChanged` on all of them uniformly, without a chain of `If TypeOf... Then` checks to sort out what kind of control it's dealing with.
+
 ### Data Binding: Keeping the ViewModel and Form in Sync
 
 Each bindable control (textboxes, listboxes, spin buttons, and command buttons) has a corresponding binding class — `TextBoxValueBinding`, `ListBoxValueBinding`, `SpinBttnValueBinding`, and `CommandBttnValueBinding` — created through a central `PropertyBindings` factory. Each binding class implements `IHandlePropertyChanged`, allowing it to listen for changes on the ViewModel.
