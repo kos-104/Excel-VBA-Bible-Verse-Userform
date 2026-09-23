@@ -40,7 +40,12 @@ It employs the **Model-View-ViewModel (MVVM)** architecture to enhance maintaina
 
 This project's MVVM structure exists to solve a common problem in VBA userforms: business logic, UI controls, and event handling tend to blur together until every procedure knows too much about everything else. MVVM keeps these concerns separate, so the form's controls don't need to know how a verse gets scraped from the web, and the scraping logic doesn't need to know which textbox displays the result.
 
-It's worth noting upfront that this project implements a **hybrid** MVVM approach rather than a textbook-pure one. Most of the form's behavior — list population, selection syncing, change notification — follows strict MVVM separation. The verse-capture and clearing commands take a more direct, pragmatic route instead, described below. This was a deliberate tradeoff, not an oversight, made in favor of simplicity for a single-form, single-consumer tool.
+It's worth noting upfront that this project implements a **hybrid** MVVM approach rather than a textbook-pure one:
+
+- List population, selection syncing, and change notification follow strict MVVM separation
+- Verse-capture and clearing commands take a more direct, pragmatic route instead, described below
+
+This was a deliberate tradeoff, not an oversight, made in favor of simplicity for a single-form, single-consumer tool.
 
 ### The Three Layers
 
@@ -74,7 +79,13 @@ This two-way flow means the ViewModel and the View stay synchronized without eit
 
 Rather than wiring a button's `Click` event directly to a ViewModel method, each user action is wrapped in a command class implementing a shared `ICommand` interface. Using the verse-capture command as an example: when the button is clicked, `CommandBinding` calls the command's `CanExecute` method first, confirming the ViewModel is in a valid state to receive the action. Only then does it call `Execute`, which forwards the request to the corresponding `BibleViewModel` method.
 
-From there, the request takes the direct route described above: `BibleViewModel` passes the userform reference into a standalone procedure, which reads the current listbox selections, performs the lookup, and writes the result straight back into the form. Similar commands (clearing line items, clearing options) follow the same pattern for their respective actions.
+From there, the request takes the direct route described above:
+
+- `BibleViewModel` passes the userform reference into a standalone procedure
+- That procedure reads the current listbox selections and performs the lookup
+- The result is written straight back into the form
+
+Similar commands (clearing line items, clearing options) follow the same pattern for their respective actions.
 
 ### Web Scraping: Retrieving Verse Text
 
