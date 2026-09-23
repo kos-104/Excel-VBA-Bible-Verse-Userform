@@ -22,6 +22,20 @@ It employs the **Model-View-ViewModel (MVVM)** architecture to enhance maintaina
 - Hover-responsive command buttons for clearer target identification
 - Thorough event handling, with custom commands for adding, clearing, and confirming line items — all backed by robust error handling
 
+## Requirements
+- Excel with macros enabled (developed and tested on Excel 365)
+- An active internet connection, for retrieving verse text
+- The following VBA References must be enabled (**Tools → References** in the VBA Editor):
+  - Microsoft Scripting Runtime
+  - Microsoft HTML Object Library
+  - Microsoft Internet Controls
+  - Microsoft XML, v6.0
+
+## How to Use
+1. Launch the userform from the button provided on the Excel sheet
+2. Navigate the form using the labeled controls and hover tooltips — the interface is intuitive by design
+3. Select a Bible version, then specify the book, chapter, and verse(s) to retrieve
+
 ## Acknowledgments
 
 Special thanks to:
@@ -32,3 +46,6 @@ Special thanks to:
 - **Mathieu Guindon and the Rubberduck team**, for creating the *SwagShop* MVVM-Lite program used as the architectural foundation for this project.
   🦆 [Lightweight MVVM in VBA](https://rubberduckvba.blog/2023/04/11/lightweight-mvvm-in-vba/)
 
+---
+
+*Built to bring scripture into the spreadsheet.*
