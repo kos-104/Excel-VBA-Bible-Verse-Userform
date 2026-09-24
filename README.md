@@ -61,7 +61,7 @@ This keeps the code straightforward, at the cost of the ViewModel knowing about 
 
 **The View** is the userform itself — textboxes, listboxes, spin buttons, and command buttons. Most controls are intentionally "dumb": they display values and raise events without containing business logic. The exception is the verse-capture and clearing flow, where the command layer hands the form directly to the logic that manipulates it, bypassing the binding layer for that operation.
 
-**Tying them together**, data binding and commands are the mechanism the ViewModel uses to mediate with the View indirectly, rather than a layer of their own. List population and selection syncing for versions, books, and chapters follow this path faithfully, even where the command operations don't.
+**Tying them together**, data binding and commands are the mechanism the ViewModel uses to communicate with the View indirectly, rather than a layer of their own. List population and selection syncing for versions, books, and chapters follow this path faithfully, even where the command operations don't.
 
 ### Interfaces and Polymorphism
 
