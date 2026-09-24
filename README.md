@@ -14,7 +14,7 @@ The **Excel VBA Bible Userform** is an internet-connected tool that uses web-scr
 It employs an architecture patterned after **Model-View-ViewModel (MVVM)** — specifically a View/ViewModel structure with data binding and command execution, adapted from the *RubberduckSwagShop MVVM-Lite* project. This structure separates the user interface from business logic, enabling flexible data binding and command execution. Interfaces are used throughout to exhibit **polymorphism** — different class modules sharing a common contract, each implementing its own specific behavior.
 
 **Key features include:**
-- A fully resizable form, controls, and downloaded verse text — ensuring a responsive experience across screen sizes
+- Fully resizable form, controls, and font text for downloaded verses — ensuring a responsive experience across screen sizes
 - Intuitive navigation via tooltips and spin buttons
 - Mouse-scrollable listboxes for added convenience
 - Support for several popular Bible versions
@@ -38,7 +38,7 @@ It employs an architecture patterned after **Model-View-ViewModel (MVVM)** — s
 
 ## Under the Hood
 
-MVVM keeps business logic, UI controls, and event handling from blurring together — a common problem in VBA userforms once every procedure starts knowing too much about everything else. The form's controls don't need to know how a verse gets scraped from the web, and the scraping logic doesn't need to know which textbox displays the result.
+MVVM keeps business logic, UI controls, and event handling from intermingling — a common problem in VBA userforms once every procedure starts knowing too much about everything else. The form's controls don't need to know how a verse gets scraped from the web, and the scraping logic doesn't need to know which textbox displays the result.
 
 This project implements a **hybrid** MVVM approach rather than a textbook-pure one, as a deliberate tradeoff in favor of simplicity for a single-form, single-consumer tool:
 
@@ -57,7 +57,7 @@ That isolation isn't absolute across the whole class, though. Command operations
 - They forward it into standalone procedures
 - Those procedures read control values and write results straight back into the form
 
-This keeps the code straightforward, at the cost of the ViewModel knowing about the View directly for that portion of its behavior, rather than mediating through bindings.
+This keeps the code straightforward, at the cost of the ViewModel knowing about the View directly for that portion of its behavior, rather than negotiating through bindings.
 
 **The View** is the userform itself — textboxes, listboxes, spin buttons, and command buttons. Most controls are intentionally "dumb": they display values and raise events without containing business logic. The exception is the verse-capture and clearing flow, where the command layer hands the form directly to the logic that manipulates it, bypassing the binding layer for that operation.
 
@@ -65,7 +65,7 @@ This keeps the code straightforward, at the cost of the ViewModel knowing about 
 
 ### Interfaces and Polymorphism
 
-VBA doesn't support inheritance the way languages like C# or Java do, but it does support interface implementation through `Implements` — and this project leans on that heavily:
+VBA doesn't support inheritance the way languages like C++ or Java do, but it does support interface implementation through `Implements` — and this project utilizes that heavily:
 
 - Each binding class (`TextBoxValueBinding`, `ListBoxValueBinding`, `SpinBttnValueBinding`, `CommandBttnValueBinding`) implements the same `IHandlePropertyChanged` interface
 - Each command class implements the same `ICommand` interface, with its own `CanExecute` and `Execute` methods
@@ -78,7 +78,7 @@ This is **polymorphism**: different class modules, sharing a common interface, e
 
 Each bindable control has a corresponding binding class — `TextBoxValueBinding`, `ListBoxValueBinding`, `SpinBttnValueBinding`, `CommandBttnValueBinding` — created through a central `PropertyBindings` factory. Each implements `IHandlePropertyChanged`, allowing it to listen for changes on the ViewModel.
 
-Using `TextBoxValueBinding` as an example, the round-trip works like this:
+Using `TextBoxValueBinding` as an example, the round-trip works as such:
 
 1. The ViewModel's property changes (e.g., new verse text is retrieved)
 2. `PropertyChangeNotification` raises an event through the `INotifyPropertyChanged` interface
@@ -117,7 +117,7 @@ A few additional components round out the user experience:
 - **`CFormResizer`** — handles proportional resizing of the form and all its controls, adapted from Stephen Bullen and Rob Bovey's *Professional Excel Development*, with supporting Win32 API calls (via a dedicated `APIs` module) used to position the form precisely at the active cell on launch
 - **`Scroll`** — enables mousewheel scrolling within listboxes, based on a solution originally developed by Jaafar Tribak
 
-Both are widely used, community-vetted utilities adapted here to fit the project's needs.
+Both are solid, community-vetted utilities adapted here to fit the project's needs.
 
 ## Acknowledgments
 
