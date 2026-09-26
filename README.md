@@ -38,7 +38,7 @@ It employs an architecture patterned after **Model-View-ViewModel (MVVM)** — s
 
 ## Under the Hood
 
-MVVM keeps business logic, UI controls, and event handling from intermingling — a common problem in VBA userforms once every procedure starts knowing too much about everything else. The form's controls don't need to know how a verse gets scraped from the web, and the scraping logic doesn't need to know which textbox displays the result.
+MVVM keeps business logic, UI controls, and event handling from meshing — a common problem in VBA userforms once every procedure starts knowing too much about everything else. The form's controls don't need to know how a verse gets scraped from the web, and the scraping logic doesn't need to know which textbox displays the result.
 
 This project implements a **hybrid** MVVM approach rather than a textbook-pure one, as a deliberate tradeoff in favor of simplicity for a single-form, single-consumer tool:
 
