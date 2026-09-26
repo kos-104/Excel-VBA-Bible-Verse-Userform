@@ -65,7 +65,7 @@ This keeps the code straightforward, at the cost of the ViewModel knowing about 
 
 ### Interfaces and Polymorphism
 
-VBA takes a composition-first approach to OOP rather than the classical inheritance element of languages like C++ or Java — and it's well-suited for it, particularly through interface implementation via Implements, which this project utilizes:
+VBA takes a composition-first approach to OOP rather than the typical inheritance framework of languages like C++ or Java — and it's well-suited for it, particularly through interface implementation via Implements, which this project utilizes:
 
 - Each binding class (`TextBoxValueBinding`, `ListBoxValueBinding`, `SpinBttnValueBinding`, `CommandBttnValueBinding`) implements the same `IHandlePropertyChanged` interface
 - Each command class implements the same `ICommand` interface, with its own `CanExecute` and `Execute` methods
